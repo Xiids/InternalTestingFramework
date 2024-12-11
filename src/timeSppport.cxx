@@ -1,8 +1,5 @@
 #include <include/timeSppport.hpp>
 
-#include <memory>
-#include <iostream>
-
 std::shared_ptr<TimeSupport>
 TimeSupport::get_instance()
 {
@@ -11,9 +8,4 @@ TimeSupport::get_instance()
                                                              { delete p; });
 
     return timeSupport_instance;
-}
-
-void TimeSupport::get_time()
-{
-    // TODO
 }
