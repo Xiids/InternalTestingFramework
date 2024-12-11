@@ -1,7 +1,12 @@
 #include <include/timeSppport.hpp>
 
 #include <iostream>
-#include <windows.h> // 包含 Sleep 函数
+
+#ifndef WINDOWS_MINGW
+#include <thread>
+#else
+#include <mingw.thread.h>
+#endif
 
 int main()
 {
@@ -9,7 +14,7 @@ int main()
 
     auto start = TimeSupport::get_instance()->get_time_ns();
 
-    Sleep(2000);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     auto end = TimeSupport::get_instance()->get_time_ns();
 
