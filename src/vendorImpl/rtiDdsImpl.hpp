@@ -4,7 +4,7 @@
 #include <include/communicationManager.hpp>
 
 // include both the standard APIs and rti extensions
-#include <rti/rti.hpp>
+#include <dds/pub/ddspub.hpp>
 
 template <typename T>
 class RtiDdsWriter : public CommunicationWriter
