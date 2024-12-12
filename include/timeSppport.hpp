@@ -16,12 +16,11 @@ public:
     inline std::int64_t calculate_time_diff_ns(std::int64_t start_time_ns, std::int64_t end_time_ns);
 
 private:
-    TimeSupport() {};
-    ~TimeSupport() {};
+    TimeSupport() = default;
+    ~TimeSupport() = default;
 
     TimeSupport(const TimeSupport &) = delete;
-
-    TimeSupport operator=(const TimeSupport &) = delete;
+    TimeSupport &operator=(const TimeSupport &) = delete;
 };
 
 std::int64_t

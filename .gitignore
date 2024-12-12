@@ -1,2 +1,3 @@
-test/timeSupport/build/
+test/timeSupport_test/build/
+test/communicationManager_test/build/
 .vscode/
