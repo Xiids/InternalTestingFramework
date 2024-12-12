@@ -6,12 +6,18 @@
 // include both the standard APIs and rti extensions
 #include <rti/rti.hpp>
 
+template <typename T>
 class RtiDdsWriter : public CommunicationWriter
 {
 public:
+    RtiDdsWriter(const dds::pub::Publisher &_publisher);
     bool SyncSend() override;
+
+private:
+    dds::pub::DataWriter<T> _writer;
 };
 
+template <typename T>
 class RtiDdsImplement : public CommunicationManager
 {
 public:

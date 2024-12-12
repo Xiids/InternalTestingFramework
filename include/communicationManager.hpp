@@ -14,6 +14,12 @@ public:
     virtual bool ASyncSend() = 0;
 };
 
+class CommunicationReader
+{
+public:
+    virtual ~CommunicationReader() = default;
+};
+
 class CommunicationManager
 {
 public:

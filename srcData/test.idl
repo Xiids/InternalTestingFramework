@@ -1,0 +1,5 @@
+struct TestType {
+    long m1;
+    double m2;
+    string m3;
+};
