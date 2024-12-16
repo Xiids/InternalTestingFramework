@@ -10,8 +10,8 @@ public:
     virtual ~CommunicationWriter() = default;
 
     /*IF We need to distinguish between synchronous and asynchronous sending?*/
-    virtual bool SyncSend() = 0;
-    virtual bool ASyncSend() = 0;
+    virtual int SyncSend() = 0;
+    // virtual bool ASyncSend() = 0;
 };
 
 class CommunicationReader
@@ -32,6 +32,6 @@ public:
 
     virtual std::string print_configuration() = 0;
 
-    virtual std::shared_ptr<CommunicationWriter> create_writer() = 0;
+    virtual std::shared_ptr<CommunicationWriter> create_writer(const std::string &topicName) = 0;
 };
 #endif

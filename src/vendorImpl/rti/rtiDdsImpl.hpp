@@ -5,16 +5,20 @@
 
 // include both the standard APIs and rti extensions
 #include <dds/pub/ddspub.hpp>
+#include <dds/sub/ddssub.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+
+#include "test.hpp"
 
 template <typename T>
 class RtiDdsWriter : public CommunicationWriter
 {
 public:
-    RtiDdsWriter(const dds::pub::Publisher &_publisher);
-    bool SyncSend() override;
+    RtiDdsWriter(const dds::pub::DataWriter<T> &_writer);
+    int SyncSend() override;
 
-private:
-    dds::pub::DataWriter<T> _writer;
+protected:
+    dds::pub::DataWriter<T> writer;
 };
 
 template <typename T>
@@ -27,12 +31,16 @@ public:
 
     std::string print_configuration() override;
 
-    std::shared_ptr<CommunicationWriter> create_writer() override;
+    std::shared_ptr<CommunicationWriter> create_writer(const std::string &topicName) override;
 
-private:
+    // protected:
     dds::domain::DomainParticipant _participant;
-    dds::sub::Subscriber _subscriber;
     dds::pub::Publisher _publisher;
+    dds::topic::Topic<T> _topic;
+    dds::pub::DataWriter<T> _writer;
 };
+
+extern template class RtiDdsImplement<::TestType>;
+template class RtiDdsImplement<::TestType>;
 
 #endif
