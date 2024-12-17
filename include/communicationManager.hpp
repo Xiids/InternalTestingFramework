@@ -33,5 +33,7 @@ public:
     virtual std::string print_configuration() = 0;
 
     virtual std::shared_ptr<CommunicationWriter> create_writer(const std::string &topicName) = 0;
+
+    virtual std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName) = 0;
 };
 #endif

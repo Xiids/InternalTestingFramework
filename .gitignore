@@ -1,3 +1,5 @@
 test/timeSupport_test/build/
 test/communicationManager_test/build/
+test/commandParameterHanding_test/build/
 .vscode/
+/thridParty

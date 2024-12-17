@@ -22,6 +22,23 @@ protected:
 };
 
 template <typename T>
+class RtiDdsReader : public CommunicationReader
+{
+public:
+    RtiDdsReader(const dds::sub::DataReader<T> &_reader);
+    // int SyncSend() override;
+
+protected:
+    dds::sub::DataReader<T> reader;
+};
+
+/**
+ * @brief RTI DDS Implementation
+
+ * @param[in] NA.
+ * @return NA.
+ */
+template <typename T>
 class RtiDdsImplement : public CommunicationManager
 {
 public:
@@ -33,11 +50,15 @@ public:
 
     std::shared_ptr<CommunicationWriter> create_writer(const std::string &topicName) override;
 
-    // protected:
+    std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName) override;
+
+private:
     dds::domain::DomainParticipant _participant;
     dds::pub::Publisher _publisher;
+    dds::sub::Subscriber _subscriber;
     dds::topic::Topic<T> _topic;
     dds::pub::DataWriter<T> _writer;
+    dds::sub::DataReader<T> _reader;
 };
 
 extern template class RtiDdsImplement<::TestType>;
