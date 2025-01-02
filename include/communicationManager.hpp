@@ -12,6 +12,8 @@ public:
     /*IF We need to distinguish between synchronous and asynchronous sending?*/
     virtual int SyncSend() = 0;
     // virtual bool ASyncSend() = 0;
+
+    virtual bool waitForPong() = 0;
 };
 
 class CommunicationReader

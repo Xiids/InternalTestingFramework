@@ -16,6 +16,16 @@ int RtiDdsWriter<T>::SyncSend()
 }
 
 template <typename T>
+bool RtiDdsWriter<T>::waitForPong()
+{
+    std::cout << "waitForPong ...." << std::endl;
+    while (!writer.publication_matched_status().current_count())
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+}
+
+template <typename T>
 RtiDdsReader<T>::RtiDdsReader(const dds::sub::DataReader<T> &_reader) : reader(_reader)
 {
 }

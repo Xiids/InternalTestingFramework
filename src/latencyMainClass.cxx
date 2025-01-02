@@ -9,13 +9,17 @@ bool latencyMainClass::runTest(int argc, char *argv[])
     std::variant<std::vector<char *>> varParam2 = param2;
 
     _parameterHander->processParameter(param1, varParam2);
-    _parameterHander->printArgsConfig();
+
+    if (_parameterHander->isPrintConfig())
+        _parameterHander->printArgsConfig();
 
     if (!(_manager = std::make_shared<RtiDdsImplement<::TestType>>()))
     {
         std::cout << "Failed to create test object" << std::endl;
         return false;
     }
+
+    _manager->initialize();
 
     [&]()
     {
@@ -26,11 +30,25 @@ bool latencyMainClass::runTest(int argc, char *argv[])
 bool latencyMainClass::runPing()
 {
     std::cout << "Running Ping Test Mode " << std::endl;
+    std::shared_ptr<CommunicationWriter> _writer;
+
+    _writer = _manager->create_writer("ddd");
+
+    _writer->waitForPong();
+
+    std::cout << "starting xx " << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::seconds(20));
 }
 
 bool latencyMainClass::runPong()
 {
     std::cout << "Running Pong Test Mode " << std::endl;
+
+    std::shared_ptr<CommunicationReader> _reader;
+    _reader = _manager->create_reader("ddd");
+
+    std::this_thread::sleep_for(std::chrono::seconds(20));
 }
 
 latencyMainClass::latencyMainClass(/* args */)

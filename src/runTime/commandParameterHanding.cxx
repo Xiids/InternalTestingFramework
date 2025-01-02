@@ -21,5 +21,9 @@ bool CommandParameterHanding::processParameter(const std::variant<int> &param1,
         {
             _parameter["pub"] = "true";
         }
+        else if (arg == "-printConfig")
+        {
+            _parameter["printConfig"] = "true";
+        }
     }
 }

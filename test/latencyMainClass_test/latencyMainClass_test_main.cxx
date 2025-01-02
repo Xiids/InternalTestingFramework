@@ -3,5 +3,12 @@
 int main(int argc, char *argv[])
 {
     latencyMainClass _latencyMain;
-    _latencyMain.runTest(argc, argv);
+    try
+    {
+        _latencyMain.runTest(argc, argv);
+    }
+    catch (const std::exception &ex)
+    {
+        std::cout << "Caught exception: " << ex.what() << std::endl;
+    }
 }

@@ -5,6 +5,8 @@
 #include <src/vendorImpl/rti/rtiDdsImpl.hpp>
 #include <src/runTime/commandParameterHanding.hpp>
 #include <memory>
+#include <chrono>
+#include <thread>
 
 class latencyMainClass
 {

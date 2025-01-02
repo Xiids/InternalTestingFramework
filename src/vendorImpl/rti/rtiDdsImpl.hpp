@@ -10,12 +10,17 @@
 
 #include "test.hpp"
 
+#include <chrono>
+#include <thread>
+
 template <typename T>
 class RtiDdsWriter : public CommunicationWriter
 {
 public:
     RtiDdsWriter(const dds::pub::DataWriter<T> &_writer);
     int SyncSend() override;
+
+    bool waitForPong() override;
 
 protected:
     dds::pub::DataWriter<T> writer;
