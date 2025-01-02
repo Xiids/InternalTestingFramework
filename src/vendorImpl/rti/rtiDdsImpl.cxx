@@ -28,7 +28,7 @@ RtiDdsImplement<T>::RtiDdsImplement() : _participant(dds::core::null),
                                         _writer(dds::core::null),
                                         _reader(dds::core::null)
 {
-    std::cout << "Hello RtiDdsImplement()";
+    std::cout << "Hello RtiDdsImplement()" << std::endl;
 }
 
 template <typename T>

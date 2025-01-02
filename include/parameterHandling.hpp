@@ -12,6 +12,7 @@ public:
     virtual ~ParameterHanding() = default;
 
     void printArgsConfig();
+    bool isPing();
 
     virtual bool processParameter(const std::variant<int> &param1,
                                   const std::variant<std::vector<char *>> &param2) = 0;

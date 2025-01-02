@@ -15,7 +15,11 @@ bool CommandParameterHanding::processParameter(const std::variant<int> &param1,
 
         if (arg == "-bestEffort")
         {
-            _parameter["reliability"] = arg;
+            _parameter["reliability"] = "true";
+        }
+        else if (arg == "-pub")
+        {
+            _parameter["pub"] = "true";
         }
     }
 }
