@@ -33,9 +33,13 @@ bool latencyMainClass::runTest(int argc, char *argv[])
 bool latencyMainClass::runPing()
 {
     std::cout << "Running Ping Test Mode " << std::endl;
-    std::shared_ptr<CommunicationWriter> _writer;
+    std::shared_ptr<CommunicationWriter> _writer = _manager->create_writer("ddd");
 
-    _writer = _manager->create_writer("ddd");
+    auto latencyPingReceiveCB_ = std::make_shared<latencyPingReceiveCB>();
+
+    if (auto _reader = _manager->create_reader("fff", latencyPingReceiveCB_))
+    {
+    }
 
     _writer->waitForPong();
 
@@ -83,7 +87,18 @@ latencyMainClass::~latencyMainClass()
 
 void latencyPongReceiveCB::processMessage(const TestMessage &message_)
 {
-    std::cout << "got ping message" << message_.timestamp_sec << "   " << message_.timestamp_usec << std::endl;
     writer_->SyncSend(message_);
     return;
+}
+
+/**
+ * --------------------------------------------------------------------------
+ */
+
+void latencyPingReceiveCB::processMessage(const TestMessage &message_)
+{
+    unsigned long long now = TimeSupport::get_instance()->get_time_us();
+
+    std::cout << message_.timestamp_sec - static_cast<int>(now / 1000000)
+              << "." << message_.timestamp_usec - static_cast<unsigned int>(now % 1000000) << std::endl;
 }

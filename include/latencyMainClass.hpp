@@ -24,6 +24,10 @@ public:
     ~latencyMainClass();
 };
 
+/**
+ * --------------------------------------------------------------------------
+ */
+
 class latencyPongReceiveCB : public interReceiveCB
 {
 public:
@@ -33,6 +37,16 @@ public:
 
 private:
     std::shared_ptr<CommunicationWriter> writer_;
+};
+
+/**
+ * --------------------------------------------------------------------------
+ */
+
+class latencyPingReceiveCB : public interReceiveCB
+{
+public:
+    void processMessage(const TestMessage &message_);
 };
 
 #endif
