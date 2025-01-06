@@ -37,6 +37,10 @@ bool latencyMainClass::runPing()
     _writer->waitForPong();
 
     std::cout << "starting xx " << std::endl;
+    _writer->SyncSend();
+    _writer->SyncSend();
+    _writer->SyncSend();
+    _writer->SyncSend();
 
     std::this_thread::sleep_for(std::chrono::seconds(20));
 }
@@ -45,8 +49,11 @@ bool latencyMainClass::runPong()
 {
     std::cout << "Running Pong Test Mode " << std::endl;
 
-    std::shared_ptr<CommunicationReader> _reader;
-    _reader = _manager->create_reader("ddd");
+    auto latencyPongReceiveCB_ = std::make_shared<latencyPongReceiveCB>();
+
+    if (auto _reader = _manager->create_reader("ddd", latencyPongReceiveCB_))
+    {
+    }
 
     std::this_thread::sleep_for(std::chrono::seconds(20));
 }

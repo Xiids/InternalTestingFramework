@@ -70,9 +70,18 @@ RtiDdsImplement<T>::create_writer(const std::string &topicName)
 
 template <typename T>
 std::shared_ptr<CommunicationReader>
-RtiDdsImplement<T>::create_reader(const std::string &topicName)
+RtiDdsImplement<T>::create_reader(const std::string &topicName, std::shared_ptr<pongReceiveCB> pongReceiveCB_)
 {
+    pongReceiveCB_->processMessage();
     _topic = dds::topic::Topic<T>(_participant, topicName);
-    _reader = dds::sub::DataReader<T>(this->_subscriber, this->_topic);
+
+    auto listener = std::make_shared<plainReceiverListener<T>>(pongReceiveCB_);
+
+    _reader = dds::sub::DataReader<T>(this->_subscriber,
+                                      this->_topic,
+                                      dds::sub::qos::DataReaderQos(),
+                                      listener,
+                                      dds::core::status::StatusMask::data_available());
+
     return std::make_shared<RtiDdsReader<T>>(_reader);
 }

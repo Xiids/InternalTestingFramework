@@ -55,7 +55,7 @@ public:
 
     std::shared_ptr<CommunicationWriter> create_writer(const std::string &topicName) override;
 
-    std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName) override;
+    std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName, std::shared_ptr<pongReceiveCB> pongReceiveCB_) override;
 
 private:
     dds::domain::DomainParticipant _participant;
@@ -76,11 +76,11 @@ class ReceiverListenerBase : public dds::sub::NoOpDataReaderListener<T>
 
 protected:
     TestMessage _message;
-    pongReceiveCB *_callback;
+    std::shared_ptr<pongReceiveCB> _callback;
 
 public:
-    ReceiverListenerBase(pongReceiveCB *callback) : _message(),
-                                                    _callback(callback)
+    ReceiverListenerBase(std::shared_ptr<pongReceiveCB> callback_) : _message(),
+                                                                     _callback(callback_)
     {
     }
 };
@@ -93,7 +93,7 @@ class plainReceiverListener : public ReceiverListenerBase<T>
 {
 
 public:
-    plainReceiverListener(pongReceiveCB *callback) : ReceiverListenerBase<T>(callback)
+    plainReceiverListener(std::shared_ptr<pongReceiveCB> callback_) : ReceiverListenerBase<T>(callback_)
     {
     }
 
@@ -106,7 +106,7 @@ public:
         {
             if (sample.info().valid())
             {
-                this->_callback->process_message(this->_message);
+                this->_callback->processMessage();
             }
         }
     }

@@ -61,7 +61,8 @@ public:
 
     virtual std::shared_ptr<CommunicationWriter> create_writer(const std::string &topicName) = 0;
 
-    virtual std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName) = 0;
+    virtual std::shared_ptr<CommunicationReader>
+    create_reader(const std::string &topicName, std::shared_ptr<pongReceiveCB> pongReceiveCB_) = 0;
 };
 
 #endif
