@@ -99,6 +99,14 @@ void latencyPingReceiveCB::processMessage(const TestMessage &message_)
 {
     unsigned long long now = TimeSupport::get_instance()->get_time_us();
 
-    std::cout << message_.timestamp_sec - static_cast<int>(now / 1000000)
-              << "." << message_.timestamp_usec - static_cast<unsigned int>(now % 1000000) << std::endl;
+    int sec_diff = static_cast<int>(now / 1000000) - message_.timestamp_sec;
+    int usec_diff = static_cast<int>(now % 1000000) - static_cast<int>(message_.timestamp_usec);
+
+    if (usec_diff < 0)
+    {
+        sec_diff -= 1;
+        usec_diff += 1000000;
+    }
+
+    std::cout << sec_diff << "." << usec_diff << std::endl;
 }
