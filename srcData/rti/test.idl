@@ -1,5 +1,4 @@
 struct TestType {
-    long m1;
-    double m2;
-    string m3;
+    long timestamp_sec;
+    unsigned long timestamp_usec;
 };

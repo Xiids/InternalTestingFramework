@@ -8,9 +8,11 @@ RtiDdsWriter<T>::RtiDdsWriter(const dds::pub::DataWriter<T> &_writer) : writer(_
 }
 
 template <typename T>
-int RtiDdsWriter<T>::SyncSend()
+int RtiDdsWriter<T>::SyncSend(const TestMessage &message_)
 {
     T _data;
+    _data.timestamp_sec(message_.timestamp_sec);
+    _data.timestamp_usec(message_.timestamp_usec);
     writer.write(_data);
     return 0;
 }
@@ -23,6 +25,8 @@ bool RtiDdsWriter<T>::waitForPong()
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+
+    return true;
 }
 
 template <typename T>
@@ -68,20 +72,50 @@ RtiDdsImplement<T>::create_writer(const std::string &topicName)
     return std::make_shared<RtiDdsWriter<T>>(_writer);
 }
 
+/**
+ * RTI on_data_available callback function implementation
+ */
+template <typename T>
+void plainReceiverListener<T>::on_data_available(dds::sub::DataReader<T> &reader)
+{
+    dds::sub::LoanedSamples<T> samples = reader.take();
+
+    for (const auto &sample : samples)
+    {
+        if (sample.info().valid())
+        {
+            const T &data = sample.data();
+            this->_message.timestamp_sec = data.timestamp_sec();
+            this->_message.timestamp_usec = data.timestamp_usec();
+            this->_callback->processMessage(this->_message);
+        }
+    }
+}
+
+/**
+ * Common methods for creating RTI DDS Reader
+ */
 template <typename T>
 std::shared_ptr<CommunicationReader>
-RtiDdsImplement<T>::create_reader(const std::string &topicName, std::shared_ptr<pongReceiveCB> pongReceiveCB_)
+RtiDdsImplement<T>::create_reader(const std::string &_topicName, std::shared_ptr<interReceiveCB> _pongReceiveCB)
 {
-    pongReceiveCB_->processMessage();
-    _topic = dds::topic::Topic<T>(_participant, topicName);
+    try
+    {
+        _topic = dds::topic::Topic<T>(_participant, _topicName);
 
-    auto listener = std::make_shared<plainReceiverListener<T>>(pongReceiveCB_);
+        auto listener = std::make_shared<plainReceiverListener<T>>(_pongReceiveCB);
 
-    _reader = dds::sub::DataReader<T>(this->_subscriber,
-                                      this->_topic,
-                                      dds::sub::qos::DataReaderQos(),
-                                      listener,
-                                      dds::core::status::StatusMask::data_available());
+        _reader = dds::sub::DataReader<T>(this->_subscriber,
+                                          this->_topic,
+                                          dds::sub::qos::DataReaderQos(),
+                                          listener,
+                                          dds::core::status::StatusMask::data_available());
 
-    return std::make_shared<RtiDdsReader<T>>(_reader);
+        return std::make_shared<RtiDdsReader<T>>(_reader);
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error creating RTI DDS Reader: " << e.what() << std::endl;
+        throw;
+    }
 }

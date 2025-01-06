@@ -1,4 +1,5 @@
 #include <include/latencyMainClass.hpp>
+#include <include/timeSppport.hpp>
 
 bool latencyMainClass::runTest(int argc, char *argv[])
 {
@@ -25,6 +26,8 @@ bool latencyMainClass::runTest(int argc, char *argv[])
     {
         (this->*(_parameterHander->isPing() ? &latencyMainClass::runPing : &latencyMainClass::runPong))();
     }();
+
+    return true;
 }
 
 bool latencyMainClass::runPing()
@@ -37,25 +40,33 @@ bool latencyMainClass::runPing()
     _writer->waitForPong();
 
     std::cout << "starting xx " << std::endl;
-    _writer->SyncSend();
-    _writer->SyncSend();
-    _writer->SyncSend();
-    _writer->SyncSend();
+    TestMessage _message;
 
-    std::this_thread::sleep_for(std::chrono::seconds(20));
+    for (int i = 0; i < 100; i++)
+    {
+        unsigned long long now = TimeSupport::get_instance()->get_time_us();
+        _message.timestamp_sec = static_cast<int>(now / 1000000);
+        _message.timestamp_usec = static_cast<unsigned int>(now % 1000000);
+        _writer->SyncSend(_message);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
+    return true;
 }
 
 bool latencyMainClass::runPong()
 {
     std::cout << "Running Pong Test Mode " << std::endl;
 
-    auto latencyPongReceiveCB_ = std::make_shared<latencyPongReceiveCB>();
+    auto latencyPongReceiveCB_ = std::make_shared<latencyPongReceiveCB>(_manager->create_writer("fff"));
 
     if (auto _reader = _manager->create_reader("ddd", latencyPongReceiveCB_))
     {
     }
 
     std::this_thread::sleep_for(std::chrono::seconds(20));
+
+    return true;
 }
 
 latencyMainClass::latencyMainClass(/* args */)
@@ -70,7 +81,9 @@ latencyMainClass::~latencyMainClass()
  * --------------------------------------------------------------------------
  */
 
-void latencyPongReceiveCB::processMessage()
+void latencyPongReceiveCB::processMessage(const TestMessage &message_)
 {
-    std::cout << "got ping message" << std::endl;
+    std::cout << "got ping message" << message_.timestamp_sec << "   " << message_.timestamp_usec << std::endl;
+    writer_->SyncSend(message_);
+    return;
 }

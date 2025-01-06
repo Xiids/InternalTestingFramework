@@ -12,13 +12,14 @@
 
 #include <chrono>
 #include <thread>
+#include <stdexcept>
 
 template <typename T>
 class RtiDdsWriter : public CommunicationWriter
 {
 public:
     RtiDdsWriter(const dds::pub::DataWriter<T> &_writer);
-    int SyncSend() override;
+    int SyncSend(const TestMessage &message_) override;
 
     bool waitForPong() override;
 
@@ -55,7 +56,7 @@ public:
 
     std::shared_ptr<CommunicationWriter> create_writer(const std::string &topicName) override;
 
-    std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName, std::shared_ptr<pongReceiveCB> pongReceiveCB_) override;
+    std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName, std::shared_ptr<interReceiveCB> pongReceiveCB_) override;
 
 private:
     dds::domain::DomainParticipant _participant;
@@ -76,11 +77,11 @@ class ReceiverListenerBase : public dds::sub::NoOpDataReaderListener<T>
 
 protected:
     TestMessage _message;
-    std::shared_ptr<pongReceiveCB> _callback;
+    std::shared_ptr<interReceiveCB> _callback;
 
 public:
-    ReceiverListenerBase(std::shared_ptr<pongReceiveCB> callback_) : _message(),
-                                                                     _callback(callback_)
+    ReceiverListenerBase(std::shared_ptr<interReceiveCB> callback_) : _message(),
+                                                                      _callback(callback_)
     {
     }
 };
@@ -93,23 +94,11 @@ class plainReceiverListener : public ReceiverListenerBase<T>
 {
 
 public:
-    plainReceiverListener(std::shared_ptr<pongReceiveCB> callback_) : ReceiverListenerBase<T>(callback_)
+    plainReceiverListener(std::shared_ptr<interReceiveCB> callback_) : ReceiverListenerBase<T>(callback_)
     {
     }
 
-    void on_data_available(dds::sub::DataReader<T> &reader)
-    {
-
-        dds::sub::LoanedSamples<T> samples = reader.take();
-
-        for (const auto &sample : samples)
-        {
-            if (sample.info().valid())
-            {
-                this->_callback->processMessage();
-            }
-        }
-    }
+    void on_data_available(dds::sub::DataReader<T> &reader);
 };
 
 extern template class RtiDdsImplement<::TestType>;

@@ -4,7 +4,7 @@
 WARNING: THIS FILE IS AUTO-GENERATED. DO NOT MODIFY.
 
 This file was generated from test.idl
-using RTI Code Generator (rtiddsgen) version 3.1.1.
+using RTI Code Generator (rtiddsgen) version 4.3.0.
 The rtiddsgen tool is part of the RTI Connext DDS distribution.
 For more information, type 'rtiddsgen -help' at a command shell
 or consult the Code Generator User's Manual.
@@ -116,44 +116,49 @@ TestTypePlugin_on_participant_attached(
     void *container_plugin_context,
     RTICdrTypeCode *type_code)
 {
-    struct RTIXCdrInterpreterPrograms *programs = NULL;
-    struct PRESTypePluginDefaultParticipantData *pd = NULL;
-    struct RTIXCdrInterpreterProgramsGenProperty programProperty =
-    RTIXCdrInterpreterProgramsGenProperty_INITIALIZER;
-    if (registration_data) {} /* To avoid warnings */
-    if (participant_info) {} /* To avoid warnings */
-    if (top_level_registration) {} /* To avoid warnings */
-    if (container_plugin_context) {} /* To avoid warnings */
-    if (type_code) {} /* To avoid warnings */
-    pd = (struct PRESTypePluginDefaultParticipantData *)
-    PRESTypePluginDefaultParticipantData_new(participant_info);
+    try {
+        struct RTIXCdrInterpreterPrograms *programs = NULL;
+        struct PRESTypePluginDefaultParticipantData *pd = NULL;
+        struct RTIXCdrInterpreterProgramsGenProperty programProperty =
+        RTIXCdrInterpreterProgramsGenProperty_INITIALIZER;
+        if (registration_data) {} /* To avoid warnings */
+        if (participant_info) {} /* To avoid warnings */
+        if (top_level_registration) {} /* To avoid warnings */
+        if (container_plugin_context) {} /* To avoid warnings */
+        if (type_code) {} /* To avoid warnings */
+        pd = (struct PRESTypePluginDefaultParticipantData *)
+        PRESTypePluginDefaultParticipantData_new(participant_info);
 
-    programProperty.generateV1Encapsulation = RTI_XCDR_TRUE;
-    programProperty.generateV2Encapsulation = RTI_XCDR_TRUE;
-    programProperty.resolveAlias = RTI_XCDR_TRUE;
-    programProperty.inlineStruct = RTI_XCDR_TRUE;
-    programProperty.optimizeEnum = RTI_XCDR_TRUE;
+        programProperty.generateV1Encapsulation = RTI_XCDR_TRUE;
+        programProperty.generateV2Encapsulation = RTI_XCDR_TRUE;
+        programProperty.resolveAlias = RTI_XCDR_TRUE;
+        programProperty.inlineStruct = RTI_XCDR_TRUE;
+        programProperty.optimizeEnum = RTI_XCDR_TRUE;
+        programProperty.unboundedSize = RTIXCdrLong_MAX;
 
-    programProperty.externalReferenceSize = 
-    (RTIXCdrUnsignedShort) sizeof(::dds::core::external<char>);
-    programProperty.getExternalRefPointerFcn = 
-    ::rti::topic::interpreter::get_external_value_pointer;
+        programProperty.externalReferenceSize = 
+        (RTIXCdrUnsignedShort) sizeof(::dds::core::external<char>);
+        programProperty.getExternalRefPointerFcn = 
+        ::rti::topic::interpreter::get_external_value_pointer;
 
-    programs = DDS_TypeCodeFactory_assert_programs_in_global_list(
-        DDS_TypeCodeFactory_get_instance(),
-        (DDS_TypeCode *) (RTIXCdrTypeCode *)&::rti::topic::dynamic_type< TestType >::get().native()
-        ,
-        &programProperty,
-        RTI_XCDR_PROGRAM_MASK_TYPEPLUGIN);
+        programs = DDS_TypeCodeFactory_assert_programs_in_global_list(
+            DDS_TypeCodeFactory_get_instance(),
+            (DDS_TypeCode *) (RTIXCdrTypeCode *)&::rti::topic::dynamic_type< TestType >::get().native()
+            ,
+            &programProperty,
+            RTI_XCDR_PROGRAM_MASK_TYPEPLUGIN);
 
-    if (programs == NULL) {
-        PRESTypePluginDefaultParticipantData_delete(
-            (PRESTypePluginParticipantData)pd);
+        if (programs == NULL) {
+            PRESTypePluginDefaultParticipantData_delete(
+                (PRESTypePluginParticipantData)pd);
+            return NULL;
+        }
+
+        pd->programs = programs;
+        return (PRESTypePluginParticipantData)pd;
+    } catch (...) {
         return NULL;
     }
-
-    pd->programs = programs;
-    return (PRESTypePluginParticipantData)pd;
 }
 
 void 
@@ -206,7 +211,7 @@ TestTypePlugin_on_endpoint_attached(
         } 
 
         if (endpoint_info->endpointKind == PRES_TYPEPLUGIN_ENDPOINT_WRITER) {
-            serializedSampleMaxSize = TestTypePlugin_get_serialized_sample_max_size(
+            serializedSampleMaxSize = ::TestTypePlugin_get_serialized_sample_max_size(
                 epd,RTI_FALSE,RTI_CDR_ENCAPSULATION_ID_CDR_BE,0);
             PRESTypePluginDefaultEndpointData_setMaxSizeSerializedSample(epd, serializedSampleMaxSize);
 
@@ -214,7 +219,7 @@ TestTypePlugin_on_endpoint_attached(
                 epd,
                 endpoint_info,
                 (PRESTypePluginGetSerializedSampleMaxSizeFunction)
-                TestTypePlugin_get_serialized_sample_max_size, epd,
+                ::TestTypePlugin_get_serialized_sample_max_size, epd,
                 (PRESTypePluginGetSerializedSampleSizeFunction)
                 PRESTypePlugin_interpretedGetSerializedSampleSize,
                 epd) == RTI_FALSE) {
@@ -263,7 +268,7 @@ TestTypePlugin_copy_sample(
     TestType *dst,
     const TestType *src)
 {
-    return TestTypePluginSupport_copy_data(dst,src);
+    return ::TestTypePluginSupport_copy_data(dst,src);
 }
 
 /* ----------------------------------------------------------------------------
@@ -287,7 +292,7 @@ TestTypePlugin_serialize_to_cdr_buffer(
 
     try{
         RTIEncapsulationId encapsulationId = RTI_CDR_ENCAPSULATION_ID_INVALID;
-        struct RTICdrStream stream;
+        struct RTICdrStream cdrStream;
         struct PRESTypePluginDefaultEndpointData epd;
         RTIBool result;
         struct PRESTypePluginDefaultParticipantData pd;
@@ -304,9 +309,13 @@ TestTypePlugin_serialize_to_cdr_buffer(
         epd._participantData = &pd;
         epd.typePlugin = &plugin;
         epd.programContext.endpointPluginData = &epd;
-        plugin.typeCode = (struct RTICdrTypeCode *)
-        (RTIXCdrTypeCode *)&::rti::topic::dynamic_type< TestType >::get().native()
-        ;
+        try {
+            plugin.typeCode = (struct RTICdrTypeCode *)
+            (RTIXCdrTypeCode *)&::rti::topic::dynamic_type< TestType >::get().native()
+            ;
+        } catch (...) {
+            return RTI_FALSE;
+        }
         pd.programs = ::rti::topic::interpreter::get_cdr_serialization_programs<
         TestType, 
         true, true, true>();
@@ -342,20 +351,20 @@ TestTypePlugin_serialize_to_cdr_buffer(
             return RTI_TRUE;
         }    
 
-        RTICdrStream_init(&stream);
-        RTICdrStream_set(&stream, (char *)buffer, *length);
+        RTICdrStream_init(&cdrStream);
+        RTICdrStream_set(&cdrStream, buffer, *length);
 
         result = PRESTypePlugin_interpretedSerialize(
             (PRESTypePluginEndpointData)&epd, 
             sample, 
-            &stream, 
+            &cdrStream, 
             RTI_TRUE, 
             encapsulationId,
             RTI_TRUE, 
             NULL);  
 
-        *length = RTICdrStream_getCurrentPositionOffset(&stream);
-        return result;     
+        *length = (unsigned int) RTICdrStream_getCurrentPositionOffset(&cdrStream);
+        return result;
     } catch (...) {
         return RTI_FALSE;
     }
@@ -367,35 +376,51 @@ TestTypePlugin_deserialize_from_cdr_buffer(
     const char * buffer,
     unsigned int length)
 {
-    struct RTICdrStream stream;
+    struct RTICdrStream cdrStream;
     struct PRESTypePluginDefaultParticipantData pd;
     struct RTIXCdrTypePluginProgramContext defaultProgramContext =
     RTIXCdrTypePluginProgramContext_INTIALIZER;
     struct PRESTypePlugin plugin;
     struct PRESTypePluginDefaultEndpointData epd;
 
-    RTICdrStream_init(&stream);
-    RTICdrStream_set(&stream, (char *)buffer, length);
+    RTICdrStream_init(&cdrStream);
+    /*
+    * The buffer is constant because this is a deserialization function
+    * (the buffer is an input parameter, not an output parameter).
+    * However, the buffer member in the stream is a (char *) so coverity
+    * complains in case something else modifies the buffer's contents later.
+    *
+    * We don't currently have a stream type with a constant buffer.
+    * Therefore, we suppress the warning after making sure that this function
+    * doesn't modify the contents of the stream's buffer.
+    */
+    /* coverity[cert_exp40_c_violation : FALSE] */
+    RTICdrStream_set(&cdrStream, (char *) buffer, length);
 
     epd.programContext = defaultProgramContext;
     epd._participantData = &pd;
     epd.typePlugin = &plugin;
     epd.programContext.endpointPluginData = &epd;
-    plugin.typeCode = (struct RTICdrTypeCode *)
-    (struct RTICdrTypeCode *)(RTIXCdrTypeCode *)&::rti::topic::dynamic_type< TestType >::get().native()
-    ;
+    try {
+        plugin.typeCode = (struct RTICdrTypeCode *)
+        (RTIXCdrTypeCode *)&::rti::topic::dynamic_type< TestType >::get().native()
+        ;
+    } catch (...) {
+        return RTI_FALSE;
+    }
     pd.programs = ::rti::topic::interpreter::get_cdr_serialization_programs<
     TestType, 
     true, true, true>();
 
     epd._assignabilityProperty.acceptUnknownEnumValue = RTI_XCDR_TRUE;
-    epd._assignabilityProperty.acceptUnknownUnionDiscriminator = RTI_XCDR_TRUE;
+    epd._assignabilityProperty.acceptUnknownUnionDiscriminator = 
+    RTI_XCDR_ACCEPT_UNKNOWN_DISCRIMINATOR_AND_SELECT_DEFAULT;
 
     ::rti::topic::reset_sample(*sample);
     return PRESTypePlugin_interpretedDeserialize( 
         (PRESTypePluginEndpointData)&epd,
         sample,
-        &stream, 
+        &cdrStream,
         RTI_TRUE, 
         RTI_TRUE, 
         NULL);
@@ -422,7 +447,7 @@ TestTypePlugin_get_serialized_sample_max_size(
         return size;
     } catch (...) {
         return 0;
-    }    
+    }
 }
 
 /* --------------------------------------------------------------------------------------
@@ -439,7 +464,7 @@ RTIBool TestTypePlugin_deserialize_key(
     PRESTypePluginEndpointData endpoint_data,
     TestType **sample, 
     RTIBool * drop_sample,
-    struct RTICdrStream *stream,
+    struct RTICdrStream *cdrStream,
     RTIBool deserialize_encapsulation,
     RTIBool deserialize_key,
     void *endpoint_plugin_qos)
@@ -447,12 +472,12 @@ RTIBool TestTypePlugin_deserialize_key(
     try {
         RTIBool result;
         if (drop_sample) {} /* To avoid warnings */
-        stream->_xTypesState.unassignable = RTI_FALSE;
+        cdrStream->_xTypesState.unassignable = RTI_FALSE;
         result= PRESTypePlugin_interpretedDeserializeKey( 
-            endpoint_data, (sample != NULL)?*sample:NULL, stream,
+            endpoint_data, (sample != NULL)?*sample:NULL, cdrStream,
             deserialize_encapsulation, deserialize_key, endpoint_plugin_qos);
         if (result) {
-            if (stream->_xTypesState.unassignable) {
+            if (cdrStream->_xTypesState.unassignable) {
                 result = RTI_FALSE;
             }
         }
@@ -526,20 +551,20 @@ struct PRESTypePlugin *TestTypePlugin_new(void)
     /* set up parent's function pointers */
     plugin->onParticipantAttached =
     (PRESTypePluginOnParticipantAttachedCallback)
-    TestTypePlugin_on_participant_attached;
+    ::TestTypePlugin_on_participant_attached;
     plugin->onParticipantDetached =
     (PRESTypePluginOnParticipantDetachedCallback)
-    TestTypePlugin_on_participant_detached;
+    ::TestTypePlugin_on_participant_detached;
     plugin->onEndpointAttached =
     (PRESTypePluginOnEndpointAttachedCallback)
-    TestTypePlugin_on_endpoint_attached;
+    ::TestTypePlugin_on_endpoint_attached;
     plugin->onEndpointDetached =
     (PRESTypePluginOnEndpointDetachedCallback)
-    TestTypePlugin_on_endpoint_detached;
+    ::TestTypePlugin_on_endpoint_detached;
 
     plugin->copySampleFnc =
     (PRESTypePluginCopySampleFunction)
-    TestTypePlugin_copy_sample;
+    ::TestTypePlugin_copy_sample;
     plugin->createSampleFnc =
     (PRESTypePluginCreateSampleFunction)
     TestTypePlugin_create_sample;
@@ -553,7 +578,7 @@ struct PRESTypePlugin *TestTypePlugin_new(void)
     (PRESTypePluginDeserializeFunction) PRESTypePlugin_interpretedDeserializeWithAlloc;
     plugin->getSerializedSampleMaxSizeFnc =
     (PRESTypePluginGetSerializedSampleMaxSizeFunction)
-    TestTypePlugin_get_serialized_sample_max_size;
+    ::TestTypePlugin_get_serialized_sample_max_size;
     plugin->getSerializedSampleMinSizeFnc =
     (PRESTypePluginGetSerializedSampleMinSizeFunction)
     PRESTypePlugin_interpretedGetSerializedSampleMinSize;
@@ -566,7 +591,7 @@ struct PRESTypePlugin *TestTypePlugin_new(void)
     TestTypePlugin_return_sample;
     plugin->getKeyKindFnc =
     (PRESTypePluginGetKeyKindFunction)
-    TestTypePlugin_get_key_kind;
+    ::TestTypePlugin_get_key_kind;
 
     /* These functions are only used for keyed types. As this is not a keyed
     type they are all set to NULL
@@ -584,8 +609,13 @@ struct PRESTypePlugin *TestTypePlugin_new(void)
     #ifdef NDDS_STANDALONE_TYPE
     plugin->typeCode = NULL; 
     #else
-    plugin->typeCode = (struct RTICdrTypeCode *) 
-    &::rti::topic::dynamic_type< TestType >::get().native();
+    try {
+        plugin->typeCode = (struct RTICdrTypeCode *)
+        &::rti::topic::dynamic_type< ::TestType >::get().native();
+    } catch (...) {
+        ::TestTypePlugin_delete(plugin);
+        return NULL;
+    }
     #endif
     plugin->languageKind = PRES_TYPEPLUGIN_CPPSTL_LANG;
 

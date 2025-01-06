@@ -24,10 +24,15 @@ public:
     ~latencyMainClass();
 };
 
-class latencyPongReceiveCB : public pongReceiveCB
+class latencyPongReceiveCB : public interReceiveCB
 {
 public:
-    void processMessage();
+    latencyPongReceiveCB(std::shared_ptr<CommunicationWriter> writer_) : writer_(writer_) {}
+
+    void processMessage(const TestMessage &message_);
+
+private:
+    std::shared_ptr<CommunicationWriter> writer_;
 };
 
 #endif

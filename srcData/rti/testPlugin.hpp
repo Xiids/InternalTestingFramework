@@ -4,14 +4,14 @@
 WARNING: THIS FILE IS AUTO-GENERATED. DO NOT MODIFY.
 
 This file was generated from test.idl
-using RTI Code Generator (rtiddsgen) version 3.1.1.
+using RTI Code Generator (rtiddsgen) version 4.3.0.
 The rtiddsgen tool is part of the RTI Connext DDS distribution.
 For more information, type 'rtiddsgen -help' at a command shell
 or consult the Code Generator User's Manual.
 */
 
-#ifndef testPlugin_1147917550_h
-#define testPlugin_1147917550_h
+#ifndef testPlugin_1147917561_h
+#define testPlugin_1147917561_h
 
 #include "test.hpp"
 
@@ -130,7 +130,7 @@ TestTypePlugin_deserialize(
     PRESTypePluginEndpointData endpoint_data,
     TestType **sample, 
     RTIBool * drop_sample,
-    struct RTICdrStream *stream,
+    struct RTICdrStream *cdrStream,
     RTIBool deserialize_encapsulation,
     RTIBool deserialize_sample, 
     void *endpoint_plugin_qos);
@@ -172,7 +172,7 @@ TestTypePlugin_deserialize_key(
     PRESTypePluginEndpointData endpoint_data,
     TestType ** sample,
     RTIBool * drop_sample,
-    struct RTICdrStream *stream,
+    struct RTICdrStream *cdrStream,
     RTIBool deserialize_encapsulation,
     RTIBool deserialize_key,
     void *endpoint_plugin_qos);
@@ -191,5 +191,5 @@ TestTypePlugin_delete(struct PRESTypePlugin *);
 #define NDDSUSERDllExport
 #endif
 
-#endif /* testPlugin_1147917550_h */
+#endif /* testPlugin_1147917561_h */
 

@@ -20,6 +20,7 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/latencyMainClass_test_main.cxx
     ${PROJECT_SOURCE_DIR}/../../src/latencyMainClass.cxx
     ${PROJECT_SOURCE_DIR}/../../src/runTime/parameterHanding.cxx
+    ${PROJECT_SOURCE_DIR}/../../src/runTime/timeSupport.cxx
     ${PROJECT_SOURCE_DIR}/../../src/runTime/commandParameterHanding.cxx
     ${PROJECT_SOURCE_DIR}/../../src/vendorImpl/rti/rtiDdsImpl.cxx
     ${PROJECT_SOURCE_DIR}/../../srcData/rti/test.cxx
