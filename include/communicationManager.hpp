@@ -4,6 +4,31 @@
 #include <string>
 #include <memory>
 
+class TestMessage
+{
+public:
+    int size;
+
+    TestMessage()
+        : size(0)
+    {
+    }
+};
+
+/**
+ * The callback function for receiving data on the pong side, base class.
+ */
+class pongReceiveCB
+{
+public:
+public:
+    virtual ~pongReceiveCB()
+    {
+    }
+    // virtual void process_message(TestMessage &message) = 0;
+    virtual void processMessage() = 0;
+};
+
 class CommunicationWriter
 {
 public:
@@ -38,4 +63,5 @@ public:
 
     virtual std::shared_ptr<CommunicationReader> create_reader(const std::string &topicName) = 0;
 };
+
 #endif

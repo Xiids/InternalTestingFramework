@@ -24,4 +24,10 @@ public:
     ~latencyMainClass();
 };
 
+class latencyPongReceiveCB : public pongReceiveCB
+{
+public:
+    void processMessage();
+};
+
 #endif

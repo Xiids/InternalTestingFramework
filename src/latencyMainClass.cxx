@@ -58,3 +58,12 @@ latencyMainClass::latencyMainClass(/* args */)
 latencyMainClass::~latencyMainClass()
 {
 }
+
+/**
+ * --------------------------------------------------------------------------
+ */
+
+void latencyPongReceiveCB::processMessage()
+{
+    std::cout << "got ping message" << std::endl;
+}

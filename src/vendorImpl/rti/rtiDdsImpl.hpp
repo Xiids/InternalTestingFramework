@@ -66,6 +66,52 @@ private:
     dds::sub::DataReader<T> _reader;
 };
 
+/**
+ * reader listener
+ * For future scalability to support types like flat and zero-copy.
+ */
+template <typename T>
+class ReceiverListenerBase : public dds::sub::NoOpDataReaderListener<T>
+{
+
+protected:
+    TestMessage _message;
+    pongReceiveCB *_callback;
+
+public:
+    ReceiverListenerBase(pongReceiveCB *callback) : _message(),
+                                                    _callback(callback)
+    {
+    }
+};
+
+/**
+ * Implements ReceiverListenerBase with Plain API.
+ */
+template <typename T>
+class plainReceiverListener : public ReceiverListenerBase<T>
+{
+
+public:
+    plainReceiverListener(pongReceiveCB *callback) : ReceiverListenerBase<T>(callback)
+    {
+    }
+
+    void on_data_available(dds::sub::DataReader<T> &reader)
+    {
+
+        dds::sub::LoanedSamples<T> samples = reader.take();
+
+        for (const auto &sample : samples)
+        {
+            if (sample.info().valid())
+            {
+                this->_callback->process_message(this->_message);
+            }
+        }
+    }
+};
+
 extern template class RtiDdsImplement<::TestType>;
 template class RtiDdsImplement<::TestType>;
 
