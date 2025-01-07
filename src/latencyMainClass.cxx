@@ -93,6 +93,7 @@ void latencyPongReceiveCB::processMessage(const TestMessage &message_)
 
 /**
  * --------------------------------------------------------------------------
+ *
  */
 
 void latencyPingReceiveCB::processMessage(const TestMessage &message_)
